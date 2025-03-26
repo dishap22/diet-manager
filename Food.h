@@ -22,6 +22,7 @@ public:
      * @param c The number of calories.
      */
     Food(string n, vector<string> k, int c) : name(n), keywords(k), calories(c) {}
+    virtual ~Food() = default;
 };
 
 #endif

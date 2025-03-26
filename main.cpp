@@ -1,3 +1,4 @@
+// Updated main.cpp
 #include "UserProfile.h"
 #include "FoodDatabase.h"
 #include "DailyLog.h"
@@ -8,21 +9,20 @@ int main() {
     FoodDatabase database;
     DailyLog log;
 
-    // Initialize with some default foods
-    database.addFood(Food("Apple", {"fruit", "apple"}, 95));
-    database.addFood(Food("Chicken Breast", {"chicken", "protein"}, 165));
-    database.addFood(Food("Bread", {"bread", "carbs"}, 80));
-    database.addFood(Food("Peanut Butter", {"peanut", "butter", "protein"}, 190));
-    database.addFood(Food("Jelly", {"jelly", "sweet"}, 50));
-
-    CompositeFood pbSandwich("Peanut Butter Sandwich", {database.foods[2], database.foods[3]});
-    database.addCompositeFood(pbSandwich);
-
-    CompositeFood pbjSandwich("Peanut Butter and Jelly Sandwich", {pbSandwich, database.foods[4]});
-    database.addCompositeFood(pbjSandwich);
+    database.addFood(new Food("Apple", {"fruit", "apple"}, 95));
+    database.addFood(new Food("Chicken Breast", {"chicken", "protein"}, 165));
+    database.addFood(new Food("Bread", {"bread", "carbs"}, 80));
+    database.addFood(new Food("Peanut Butter", {"peanut", "butter", "protein"}, 190));
+    database.addFood(new Food("Jelly", {"jelly", "sweet"}, 50));
 
     while (true) {
-        cout << "Choose an option: (1) Log food, (2) Create composite food, (3) View all foods, (4) Add new basic food, (5) Exit: ";
+        cout << "\nChoose an option:\n"
+             << "(1) Log food\n"
+             << "(2) Create composite food\n"
+             << "(3) View all foods\n"
+             << "(4) Add new basic food\n"
+             << "(5) Exit\n"
+             << "Enter your choice: ";
         int option;
         cin >> option;
 
@@ -44,30 +44,54 @@ int main() {
         }
         else if (option == 2) {
             string compositeName;
-            vector<Food> ingredients;
+            vector<CompositeFood::Ingredient> ingredients;
+            vector<string> keywords;
 
             cout << "Enter name for the new composite food: ";
             cin.ignore();
             getline(cin, compositeName);
 
+            cout << "Enter optional keywords (separated by commas, leave empty to generate from ingredients): ";
+            string keywordInput;
+            getline(cin, keywordInput);
+            if (!keywordInput.empty()) {
+                size_t pos = 0;
+                while ((pos = keywordInput.find(',')) != string::npos) {
+                    string kw = keywordInput.substr(0, pos);
+                    keywords.push_back(kw);
+                    keywordInput.erase(0, pos + 1);
+                }
+                keywords.push_back(keywordInput);
+            }
+
             database.displayAllFoods();
 
-            cout << "Enter indices of foods to combine (separated by spaces, end with -1): ";
-            int index;
-            while (cin >> index && index != -1) {
-                if (index >= 0 && index < database.foods.size()) {
-                    ingredients.push_back(database.foods[index]);
-                } else {
+            cout << "Add ingredients (enter index and servings, end with -1):\n";
+            while (true) {
+                int index;
+                cout << "Food index (-1 to finish): ";
+                cin >> index;
+                if (index == -1) break;
+
+                if (index < 0 || index >= database.foods.size()) {
                     cout << "Invalid index. Try again.\n";
+                    continue;
                 }
+
+                int servings;
+                cout << "Number of servings: ";
+                cin >> servings;
+
+                ingredients.push_back({database.foods[index], servings});
             }
 
             if (!ingredients.empty()) {
-                CompositeFood newComposite(compositeName, ingredients);
+                CompositeFood* newComposite = new CompositeFood(compositeName, ingredients, keywords);
                 database.addCompositeFood(newComposite);
-                cout << "Composite food created: " << compositeName << " with " << newComposite.calories << " calories.\n";
+                cout << "Composite food created: " << compositeName
+                     << " with " << newComposite->calories << " calories.\n";
             } else {
-                cout << "No valid ingredients selected.\n";
+                cout << "No ingredients selected. Composite food not created.\n";
             }
         }
         else if (option == 3) {
@@ -82,16 +106,21 @@ int main() {
             cin.ignore();
             getline(cin, name);
 
-            cout << "Enter keywords (separated by spaces, end with empty line): ";
-            string keyword;
-            while (getline(cin, keyword) && !keyword.empty()) {
-                keywords.push_back(keyword);
+            cout << "Enter keywords (separated by commas): ";
+            string keywordInput;
+            getline(cin, keywordInput);
+            size_t pos = 0;
+            while ((pos = keywordInput.find(',')) != string::npos) {
+                string kw = keywordInput.substr(0, pos);
+                keywords.push_back(kw);
+                keywordInput.erase(0, pos + 1);
             }
+            keywords.push_back(keywordInput);
 
             cout << "Enter calories: ";
             cin >> calories;
 
-            database.addFood(Food(name, keywords, calories));
+            database.addFood(new Food(name, keywords, calories));
             cout << "New basic food added: " << name << endl;
         }
         else if (option == 5) {

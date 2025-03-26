@@ -12,14 +12,21 @@ using namespace std;
  */
 class FoodDatabase {
 public:
-    vector<Food> foods;
+    vector<Food*> foods;
+
+    ~FoodDatabase() {
+        for (auto food : foods) {
+            delete food;
+        }
+    }
+
 
     /**
      * Adds a food item to the database.
      *
      * @param food The food item to add.
      */
-    void addFood(Food food) {
+    void addFood(Food* food) {
         foods.push_back(food);
     }
 
@@ -28,7 +35,7 @@ public:
      *
      * @param food The composite food item to add.
      */
-    void addCompositeFood(CompositeFood food) {
+    void addCompositeFood(CompositeFood* food) {
         foods.push_back(food);
     }
 
@@ -40,10 +47,10 @@ public:
      */
     Food* searchFood(string keyword) {
         for (auto &food : foods) {
-            if (food.name == keyword) return &food;
+            if (food->name == keyword) return food;
 
-            for (auto &k : food.keywords) {
-                if (k == keyword) return &food;
+            for (auto &k : food->keywords) {
+                if (k == keyword) return food;
             }
         }
         return nullptr;
@@ -55,7 +62,7 @@ public:
     void displayAllFoods() {
         cout << "Available foods:\n";
         for (int i = 0; i < foods.size(); ++i) {
-            cout << i << ": " << foods[i].name << " (" << foods[i].calories << " calories)\n";
+            cout << i << ": " << foods[i]->name << " (" << foods[i]->calories << " calories) - " << (dynamic_cast<CompositeFood*>(foods[i]) ? "Composite" : "Basic") << endl;
         }
     }
 };
