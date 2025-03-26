@@ -12,7 +12,7 @@ Then run the executable, e.g. `./DietManager`
 
 - [x] The program must maintain a database of basic foods for consumption (e.g., cheddar cheese, hot dogs, whole milk, etc.). To keep things simple, your prototype need only track the following for each basic food: an identifying string, a list of search keywords used to locate the food, and the calories associated with one serving. It should be obvious from the design how this could be easily expanded to include other nutritional information (protein, carbohydrates, fiber, fat, saturated fat, various minerals, vitamins, etc.)
 
-- [ ] The user must have some way to create composite foods from basic foods (e.g., a peanut butter sandwich from two pieces of bread and a serving of peanut butter, or a peanut butter and jelly sandwich from a peanut butter sandwich and a serving of jelly).
+- [x] The user must have some way to create composite foods from basic foods (e.g., a peanut butter sandwich from two pieces of bread and a serving of peanut butter, or a peanut butter and jelly sandwich from a peanut butter sandwich and a serving of jelly).
 
 - [ ] The database itself may consist of one file with both basic and composite foods, or two files, one for each category of food. The format of the database file(s) is up to you to decide, with the stipulation that these must be text files that can be viewed (and changed if necessary) in a standard text editor
 
