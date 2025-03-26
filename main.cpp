@@ -4,7 +4,7 @@
 #include <iostream>
 
 int main() {
-    UserProfile user("Male", 25, 175, 70, "Moderate");
+    UserProfile user("DummyUser", "Male", 25, 175, 70, "Moderate");
     FoodDatabase database;
     DailyLog log;
 
