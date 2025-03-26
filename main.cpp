@@ -8,6 +8,7 @@ int main() {
     FoodDatabase database;
     DailyLog log;
 
+    // Initialize with some default foods
     database.addFood(Food("Apple", {"fruit", "apple"}, 95));
     database.addFood(Food("Chicken Breast", {"chicken", "protein"}, 165));
     database.addFood(Food("Bread", {"bread", "carbs"}, 80));
@@ -21,7 +22,7 @@ int main() {
     database.addCompositeFood(pbjSandwich);
 
     while (true) {
-        cout << "Choose an option: (1) Log food, (2) Create composite food, (3) View all foods, (4) Exit: ";
+        cout << "Choose an option: (1) Log food, (2) Create composite food, (3) View all foods, (4) Add new basic food, (5) Exit: ";
         int option;
         cin >> option;
 
@@ -73,6 +74,27 @@ int main() {
             database.displayAllFoods();
         }
         else if (option == 4) {
+            string name;
+            vector<string> keywords;
+            int calories;
+
+            cout << "Enter food name: ";
+            cin.ignore();
+            getline(cin, name);
+
+            cout << "Enter keywords (separated by spaces, end with empty line): ";
+            string keyword;
+            while (getline(cin, keyword) && !keyword.empty()) {
+                keywords.push_back(keyword);
+            }
+
+            cout << "Enter calories: ";
+            cin >> calories;
+
+            database.addFood(Food(name, keywords, calories));
+            cout << "New basic food added: " << name << endl;
+        }
+        else if (option == 5) {
             break;
         }
         else {
