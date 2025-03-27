@@ -105,13 +105,12 @@ int main() {
             cout << "Enter keywords (separated by commas): ";
             string keywordInput;
             getline(cin, keywordInput);
-            size_t pos = 0;
-            while ((pos = keywordInput.find(',')) != string::npos) {
-                string kw = keywordInput.substr(0, pos);
-                keywords.push_back(kw);
-                keywordInput.erase(0, pos + 1);
+            istringstream keywordStream(keywordInput);
+            string keyword;
+            while (keywordStream >> keyword) {
+                keywords.push_back(keyword);
             }
-            keywords.push_back(keywordInput);
+
 
             cout << "Enter calories: ";
             cin >> calories;
