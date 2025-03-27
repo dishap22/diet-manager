@@ -2,7 +2,182 @@
 #include "FoodDatabase.h"
 #include "DailyLog.h"
 #include <iostream>
+#include <limits>
 
+using namespace std;
+
+/**
+ * Prompts the user for an integer input within a specified range.
+ *
+ * @param prompt The message to display to the user.
+ * @param minVal The minimum allowed value.
+ * @param maxVal The maximum allowed value.
+ * @return The integer input by the user.
+ */
+int getIntegerInput(const string& prompt, int minVal, int maxVal) {
+    int value;
+    while (true) {
+        cout << prompt;
+        if (!(cin >> value) || value < minVal || value > maxVal) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter a number between "
+                 << minVal << " and " << maxVal << ".\n";
+        } else {
+            cin.ignore();
+            return value;
+        }
+    }
+}
+
+/**
+ * Prompts the user for a positive integer input.
+ *
+ * @param prompt The message to display to the user.
+ * @return The positive integer input by the user.
+ */
+int getPositiveInteger(const string& prompt) {
+    return getIntegerInput(prompt, 1, numeric_limits<int>::max());
+}
+
+/**
+ * Prompts the user for a non-empty string input.
+ *
+ * @param prompt The message to display to the user.
+ * @return The non-empty string input by the user.
+ */
+string getNonEmptyString(const string& prompt) {
+    string input;
+    while (true) {
+        cout << prompt;
+        getline(cin, input);
+        if (!input.empty()) {
+            return input;
+        }
+        cout << "Input cannot be empty. Please try again.\n";
+    }
+}
+
+/**
+ * Prompts the user for a list of keywords.
+ *
+ * @return A vector containing the keywords entered by the user.
+ */
+vector<string> getKeywords() {
+    vector<string> keywords;
+    cout << "Enter keywords (separated by commas): ";
+    string keywordInput;
+    getline(cin, keywordInput);
+
+    if (!keywordInput.empty()) {
+        stringstream ss(keywordInput);
+        string keyword;
+        while (getline(ss, keyword, ',')) {
+            keyword.erase(0, keyword.find_first_not_of(" \t"));
+            keyword.erase(keyword.find_last_not_of(" \t") + 1);
+            if (!keyword.empty()) {
+                keywords.push_back(keyword);
+            }
+        }
+    }
+    return keywords;
+}
+
+/**
+ * Logs a food item to the daily log.
+ *
+ * @param database The food database to search for the food item.
+ * @param log The daily log to add the food item to.
+ */
+void logFood(FoodDatabase& database, DailyLog& log) {
+    string choice = getNonEmptyString("Enter a food name to log: ");
+    Food* selectedFood = database.searchFood(choice);
+
+    if (!selectedFood) {
+        cout << "Food not found!\n";
+        return;
+    }
+
+    int servings = getPositiveInteger("Enter number of servings: ");
+    log.addFood(selectedFood->name, servings);
+    cout << "Logged " << servings << " serving(s) of " << selectedFood->name << ".\n";
+}
+
+/**
+ * Creates a composite food item from existing food items.
+ *
+ * @param database The food database to search for the food items and add the food to.
+ */
+void createCompositeFood(FoodDatabase& database) {
+    string compositeName = getNonEmptyString("Enter name for the new composite food: ");
+
+    cout << "Enter optional keywords (leave empty to generate from ingredients):\n";
+    vector<string> keywords = getKeywords();
+
+    database.displayAllFoods();
+    vector<CompositeFood::Ingredient> ingredients;
+
+    while (true) {
+        int index = getIntegerInput("Food index (-1 to finish): ", -1, database.foods.size() - 1);
+        if (index == -1) {
+            if (ingredients.empty()) {
+                cout << "You must add at least one ingredient.\n";
+                continue;
+            }
+            break;
+        }
+
+        bool duplicate = false;
+        for (const auto& ing : ingredients) {
+            if (ing.food == database.foods[index]) {
+                duplicate = true;
+                break;
+            }
+        }
+        if (duplicate) {
+            cout << "This ingredient is already added. Try again.\n";
+            continue;
+        }
+
+        int servings = getPositiveInteger("Number of servings: ");
+        ingredients.push_back({database.foods[index], servings});
+        cout << "Added " << servings << " serving(s) of " << database.foods[index]->name << ".\n";
+    }
+
+    CompositeFood* newComposite = new CompositeFood(compositeName, ingredients, keywords);
+    database.addCompositeFood(newComposite);
+    cout << "Composite food created: " << compositeName
+         << " with " << newComposite->calories << " calories.\n";
+}
+
+/**
+ * Adds a new basic food item to the database.
+ *
+ * @param database The food database to add the food item to.
+ */
+void addBasicFood(FoodDatabase& database) {
+    string name = getNonEmptyString("Enter food name: ");
+    vector<string> keywords = getKeywords();
+
+    int calories;
+    while (true) {
+        cout << "Enter calories: ";
+        if (cin >> calories && calories >= 0) {
+            cin.ignore();
+            break;
+        }
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Please enter a non-negative number.\n";
+    }
+
+    database.addFood(new Food(name, keywords, calories));
+    cout << "New basic food added: " << name << endl;
+}
+
+/**
+ * The main function of the program.
+ */
 int main() {
     UserProfile user("DummyUser", "Male", 25, 175, 70, "Moderate");
     FoodDatabase database;
@@ -17,115 +192,34 @@ int main() {
              << "(3) View all foods\n"
              << "(4) Add new basic food\n"
              << "(5) Save database\n"
-             << "(6) Exit\n"
-             << "Enter your choice: ";
-        int option;
-        cin >> option;
+             << "(6) Exit\n";
 
-        if (option == 1) {
-            string choice;
-            cout << "Enter a food name to log: ";
-            cin.ignore();
-            getline(cin, choice);
-            Food* selectedFood = database.searchFood(choice);
+        int option = getIntegerInput("Enter your choice: ", 1, 6);
 
-            if (selectedFood) {
-                int servings;
-                cout << "Enter number of servings: ";
-                cin >> servings;
-                log.addFood(selectedFood->name, servings);
-            } else {
-                cout << "Food not found!\n";
+        try {
+            switch (option) {
+                case 1:
+                    logFood(database, log);
+                    break;
+                case 2:
+                    createCompositeFood(database);
+                    break;
+                case 3:
+                    database.displayAllFoods();
+                    break;
+                case 4:
+                    addBasicFood(database);
+                    break;
+                case 5:
+                    database.saveDatabase("food_database.txt");
+                    break;
+                case 6:
+                    database.saveDatabase("food_database.txt");
+                    log.displayLog();
+                    return 0;
             }
-        }
-        else if (option == 2) {
-            string compositeName;
-            vector<CompositeFood::Ingredient> ingredients;
-            vector<string> keywords;
-
-            cout << "Enter name for the new composite food: ";
-            cin.ignore();
-            getline(cin, compositeName);
-
-            cout << "Enter optional keywords (separated by commas, leave empty to generate from ingredients): ";
-            string keywordInput;
-            getline(cin, keywordInput);
-            istringstream keywordStream(keywordInput);
-            string keyword;
-            while (keywordStream >> keyword) {
-                keywords.push_back(keyword);
-            }
-
-            database.displayAllFoods();
-
-            cout << "Add ingredients (enter index and servings, end with -1):\n";
-            while (true) {
-                int index;
-                cout << "Food index (-1 to finish): ";
-                cin >> index;
-                if (index == -1) break;
-
-                if (index < 0 || index >= database.foods.size()) {
-                    cout << "Invalid index. Try again.\n";
-                    continue;
-                }
-
-                int servings;
-                cout << "Number of servings: ";
-                cin >> servings;
-
-                ingredients.push_back({database.foods[index], servings});
-            }
-
-            if (!ingredients.empty()) {
-                CompositeFood* newComposite = new CompositeFood(compositeName, ingredients, keywords);
-                database.addCompositeFood(newComposite);
-                cout << "Composite food created: " << compositeName
-                     << " with " << newComposite->calories << " calories.\n";
-            } else {
-                cout << "No ingredients selected. Composite food not created.\n";
-            }
-        }
-        else if (option == 3) {
-            database.displayAllFoods();
-        }
-        else if (option == 4) {
-            string name;
-            vector<string> keywords;
-            int calories;
-
-            cout << "Enter food name: ";
-            cin.ignore();
-            getline(cin, name);
-
-            cout << "Enter keywords (separated by commas): ";
-            string keywordInput;
-            getline(cin, keywordInput);
-            istringstream keywordStream(keywordInput);
-            string keyword;
-            while (keywordStream >> keyword) {
-                keywords.push_back(keyword);
-            }
-
-
-            cout << "Enter calories: ";
-            cin >> calories;
-
-            database.addFood(new Food(name, keywords, calories));
-            cout << "New basic food added: " << name << endl;
-        }
-        else if (option == 5) {
-            database.saveDatabase("food_database.txt");
-        }
-        else if (option == 6) {
-            database.saveDatabase("food_database.txt");
-            break;
-        }
-        else {
-            cout << "Invalid option, try again.\n";
+        } catch (const exception& e) {
+            cerr << "Error: " << e.what() << endl;
         }
     }
-
-    log.displayLog();
-    return 0;
 }

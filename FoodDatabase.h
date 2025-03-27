@@ -80,6 +80,11 @@ public:
             return;
         }
 
+        if (!file.is_open()) {
+            cerr << "Error: Could not open file " << filename << endl;
+            return;
+        }
+
         string line;
         while (getline(file, line)) {
             stringstream ss(line);
@@ -144,6 +149,11 @@ public:
         ofstream file(filename);
         if (!file) {
             cout << "Error saving database!\n";
+            return;
+        }
+
+        if (!file.is_open()) {
+            cerr << "Error: Could not create file " << filename << endl;
             return;
         }
 
