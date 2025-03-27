@@ -1,4 +1,3 @@
-// Updated main.cpp
 #include "UserProfile.h"
 #include "FoodDatabase.h"
 #include "DailyLog.h"
@@ -9,11 +8,7 @@ int main() {
     FoodDatabase database;
     DailyLog log;
 
-    database.addFood(new Food("Apple", {"fruit", "apple"}, 95));
-    database.addFood(new Food("Chicken Breast", {"chicken", "protein"}, 165));
-    database.addFood(new Food("Bread", {"bread", "carbs"}, 80));
-    database.addFood(new Food("Peanut Butter", {"peanut", "butter", "protein"}, 190));
-    database.addFood(new Food("Jelly", {"jelly", "sweet"}, 50));
+    database.loadDatabase("food_database.txt");
 
     while (true) {
         cout << "\nChoose an option:\n"
@@ -21,7 +16,8 @@ int main() {
              << "(2) Create composite food\n"
              << "(3) View all foods\n"
              << "(4) Add new basic food\n"
-             << "(5) Exit\n"
+             << "(5) Save database\n"
+             << "(6) Exit\n"
              << "Enter your choice: ";
         int option;
         cin >> option;
@@ -124,6 +120,10 @@ int main() {
             cout << "New basic food added: " << name << endl;
         }
         else if (option == 5) {
+            database.saveDatabase("food_database.txt");
+        }
+        else if (option == 6) {
+            database.saveDatabase("food_database.txt");
             break;
         }
         else {

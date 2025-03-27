@@ -14,14 +14,14 @@ Then run the executable, e.g. `./DietManager`
 
 - [x] The user must have some way to create composite foods from basic foods (e.g., a peanut butter sandwich from two pieces of bread and a serving of peanut butter, or a peanut butter and jelly sandwich from a peanut butter sandwich and a serving of jelly).
 
-- [ ] The database itself may consist of one file with both basic and composite foods, or two files, one for each category of food. The format of the database file(s) is up to you to decide, with the stipulation that these must be text files that can be viewed (and changed if necessary) in a standard text editor
+- [x] The database itself may consist of one file with both basic and composite foods, or two files, one for each category of food. The format of the database file(s) is up to you to decide, with the stipulation that these must be text files that can be viewed (and changed if necessary) in a standard text editor
 
-- [ ] The database must be loaded when the program is executed and saved at program exit. The user must be able to save the database during a session without terminating the program.
+- [x] The database must be loaded when the program is executed and saved at program exit. The user must be able to save the database during a session without terminating the program.
 
 - [ ] The user must be able to add new basic foods via the user interface. For the prototype, new basic foods will be created by entering the identifier, keywords, and calories. However, in the production version users will be able to download food information from a variety of web sites, either those provided by food producers (e.g., restaurants like McDonalds) or by general diet databases. As these sites all have their own idiosyncratic information formats, you must clearly show how your design could be easily extended to handle an additional web site without changes rippling through
 the system.
 
-- [ ] The user must be able to define new composite foods by selecting one or more existing composite and basic foods and giving the number of servings of each selected food. Each composite, like each basic food, will have an identifying string and list of keywords used in searching. The calories per serving are determined by summing the calories of the component foods.
+- [x] The user must be able to define new composite foods by selecting one or more existing composite and basic foods and giving the number of servings of each selected food. Each composite, like each basic food, will have an identifying string and list of keywords used in searching. The calories per serving are determined by summing the calories of the component foods.
 
 ### Daily Logs
 
