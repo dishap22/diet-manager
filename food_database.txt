@@ -3,6 +3,4 @@ B|Chicken Breast|165|chicken,protein
 B|Bread|80|bread,carbs
 B|Peanut Butter|190|peanut,butter,protein
 B|Jelly|50|jelly,sweet
-B|Banana|35|banana fruit
-C|Apple Banana|Apple,1;Banana,1|apple,banana fruit,fruit
-B|Orange|25|orange,fruit
+C|Apple Jelly|Apple,1;Jelly,1|apple,jelly,applejelly

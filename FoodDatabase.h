@@ -86,7 +86,7 @@ public:
             string type;
             getline(ss, type, '|');
 
-            if (type == "B") { // Basic Food
+            if (type == "B") {
                 string name, keywordStr;
                 int calories;
                 getline(ss, name, '|');
@@ -100,7 +100,7 @@ public:
                     keywords.push_back(keyword);
                 }
                 addFood(new Food(name, keywords, calories));
-            } else if (type == "C") { // Composite Food
+            } else if (type == "C") {
                 string name, ingredientStr, keywordStr;
                 getline(ss, name, '|');
                 getline(ss, ingredientStr, '|');

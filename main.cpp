@@ -50,14 +50,10 @@ int main() {
             cout << "Enter optional keywords (separated by commas, leave empty to generate from ingredients): ";
             string keywordInput;
             getline(cin, keywordInput);
-            if (!keywordInput.empty()) {
-                size_t pos = 0;
-                while ((pos = keywordInput.find(',')) != string::npos) {
-                    string kw = keywordInput.substr(0, pos);
-                    keywords.push_back(kw);
-                    keywordInput.erase(0, pos + 1);
-                }
-                keywords.push_back(keywordInput);
+            istringstream keywordStream(keywordInput);
+            string keyword;
+            while (keywordStream >> keyword) {
+                keywords.push_back(keyword);
             }
 
             database.displayAllFoods();
