@@ -2,9 +2,9 @@
 
 ## Running
 
-Compile `main.cpp`, for e.g. `g++ main.cpp -o DietManager`.
+Compile `main.cpp` by running `make` and then run `make run`.
 
-Then run the executable, e.g. `./DietManager`
+Run `make clean` to delete the executable file.
 
 ## To-Do
 
