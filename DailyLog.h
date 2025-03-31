@@ -1,6 +1,7 @@
 #ifndef DAILYLOG_H
 #define DAILYLOG_H
 
+#include "Utils.h"
 #include <map>
 #include <string>
 #include <iostream>
@@ -16,6 +17,7 @@ using namespace std;
 
 class FoodDatabase;
 class Food;
+class UserProfile;
 
 /**
  * Represents a daily log of food items consumed.
@@ -24,40 +26,6 @@ class DailyLog {
 private:
     map<string, unordered_map<string, int>> log;
     stack<pair<string, pair<string, int>>> undoStack;
-    
-    /**
-     * Checks if the given date is valid.
-     * 
-     * @param date The date to check.
-     * @return True if the date is valid, false otherwise.
-     */
-    bool checkValidDate(const string& date) {
-        if (date.length() != 10 || date[2] != '/' || date[5] != '/') {
-            return false;
-        }
-        
-        // Check if all parts are numeric
-        for (int i = 0; i < 10; i++) {
-            if (i != 2 && i != 5 && !isdigit(date[i])) {
-                return false;
-            }
-        }
-        
-        int day = stoi(date.substr(0, 2));
-        int month = stoi(date.substr(3, 2));
-        int year = stoi(date.substr(6, 4));
-
-        if (day < 1 || month < 1 || month > 12 || year < 1900) {
-            return false;
-        }
-
-        int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-        if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
-            daysInMonth[1] = 29;
-        }
-
-        return day <= daysInMonth[month - 1];
-    }
 
     /**
      * Gets today's date formatted as DD/MM/YYYY.
@@ -439,7 +407,7 @@ public:
     /**
      * Displays the log for a specific date.
      */
-    void displayLogByDate(FoodDatabase& database) {
+    void displayLogByDate(FoodDatabase& database, UserProfile& user){
         string date;
         cout << "Enter date (DD/MM/YYYY or press Enter for today): ";
         getline(cin, date);
@@ -470,12 +438,14 @@ public:
         }
     
         cout << "Total calories consumed: " << totalCalories << " calories\n";
+        cout << "Target calories for the day: " << user.getTargetCalories(date) << " calories\n";
+        cout << "Remaining calories: " << user.getTargetCalories(date) - totalCalories << " calories\n";
     }
 
     /**
      * Displays the complete log, including a summary of total calories consumed for each day.
      */
-    void displayAllLogs(FoodDatabase& database) {
+    void displayAllLogs(FoodDatabase& database, UserProfile& user) {
         if (log.empty()) {
             cout << "No log entries found.\n";
             return;
@@ -504,6 +474,8 @@ public:
             }
 
             cout << "Total calories consumed for " << day.first << ": " << totalCalories << " calories\n";
+            cout << "Target calories for the day: " << user.getTargetCalories(day.first) << " calories\n";
+            cout << "Remaining calories: " << user.getTargetCalories(day.first) - totalCalories << " calories\n";
         }
     }
 };

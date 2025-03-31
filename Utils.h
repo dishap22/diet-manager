@@ -86,4 +86,38 @@ vector<string> getKeywords() {
     return keywords;
 }
 
+/**
+ * Checks if the given date is valid.
+ * 
+ * @param date The date to check.
+ * @return True if the date is valid, false otherwise.
+ */
+bool checkValidDate(const string& date) {
+    if (date.length() != 10 || date[2] != '/' || date[5] != '/') {
+        return false;
+    }
+    
+    // Check if all parts are numeric
+    for (int i = 0; i < 10; i++) {
+        if (i != 2 && i != 5 && !isdigit(date[i])) {
+            return false;
+        }
+    }
+    
+    int day = stoi(date.substr(0, 2));
+    int month = stoi(date.substr(3, 2));
+    int year = stoi(date.substr(6, 4));
+
+    if (day < 1 || month < 1 || month > 12 || year < 1900) {
+        return false;
+    }
+
+    int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
+        daysInMonth[1] = 29;
+    }
+
+    return day <= daysInMonth[month - 1];
+}
+
 #endif

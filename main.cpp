@@ -79,6 +79,49 @@ void addBasicFood(FoodDatabase& database) {
 }
 
 /**
+ * Displays the Update Profile submenu and handles user choices.
+ * 
+ * @param user The user profile to update.
+ * @param log The daily log to update with new profile information.
+ * @param database The food database to recalculate calorie intake.
+ */
+
+ void updateProfileMenu(UserProfile& user, DailyLog& log, FoodDatabase& database) {
+    while (true) {
+        cout << "\nUpdate Profile Menu:\n"
+             << "(1) View Profile Information\n"
+             << "(2) Update Profile Information\n"
+             << "(3) Update Calorie Calculation Method\n"
+             << "(4) Update Activity Level\n"
+             << "(5) Save Profile and Return to Main Menu\n";
+
+        int option = getIntegerInput("Enter your choice: ", 1, 5);
+
+        try {
+            switch (option) {
+                case 1:
+                    user.displayProfile();
+                    break;
+                case 2:
+                    user.updateProfile();
+                    break;
+                case 3:
+                    user.updateCalorieCalculation();
+                    break;
+                case 4:
+                    user.updateActivityLevel();
+                    break;
+                case 5:
+                    user.saveRecords();
+                    return;
+            }
+        } catch (const exception& e) {
+            cerr << "Error: " << e.what() << endl;
+        }
+    }
+ }
+
+/**
  * Displays the Log Foods submenu and handles user choices.
  *
  * @param database The food database to search for food items.
@@ -94,7 +137,7 @@ void logFoodsMenu(FoodDatabase& database, DailyLog& log, UserProfile& user) {
              << "(4) Undo Log Entry\n"
              << "(5) View Log\n"
              << "(6) View Log by Date\n"
-             << "(7) Back to Main Menu\n";
+             << "(7) Return to Main Menu\n";
 
         int option = getIntegerInput("Enter your choice: ", 1, 7);
 
@@ -113,10 +156,10 @@ void logFoodsMenu(FoodDatabase& database, DailyLog& log, UserProfile& user) {
                     log.undoLog();
                     break;
                 case 5:
-                    log.displayAllLogs(database);
+                    log.displayAllLogs(database, user);
                     break;
                 case 6:
-                    log.displayLogByDate(database);
+                    log.displayLogByDate(database, user);
                     break;
                 case 7:
                     return; // Exit the Log Foods menu
@@ -139,7 +182,7 @@ void manageFoodsMenu(FoodDatabase& database) {
              << "(2) View All Foods\n"
              << "(3) Add New Basic Food\n"
              << "(4) Save Database\n"
-             << "(5) Back to Main Menu\n";
+             << "(5) Return to Main Menu\n";
 
         int option = getIntegerInput("Enter your choice: ", 1, 5);
 
@@ -170,7 +213,26 @@ void manageFoodsMenu(FoodDatabase& database) {
  * The main function of the program.
  */
 int main() {
-    UserProfile user("DummyUser", "Male", 25, 175, 70, "Moderate");
+    int age, weight, height;
+    string gender, activity;
+    ifstream file("user_profile.txt");
+
+    UserProfile user;
+    // Check whether user_profile.txt exists and if it doesn't, prompt the user to create a new profile
+    if(!file) {
+        cout << "No existing profile found. Please create a new profile.\n";
+        age = getIntegerInput("Enter your age: ", 1, 150);
+        height = getIntegerInput("Enter your height (cm): ", 1, 250);
+        weight = getIntegerInput("Enter your weight (kg): ", 1, 200);
+        int g = getIntegerInput("Enter 0 to select male, and 1 to select female: ", 0, 1);
+        if(g == 0) gender = "Male";
+        else gender = "Female";
+        activity = "Moderate";
+        UserProfile temp(age, height, weight, gender, activity);
+        user = temp;
+        user.saveRecords();
+    }
+
     FoodDatabase database;
     DailyLog log;
 
@@ -180,7 +242,8 @@ int main() {
         cout << "\nMain Menu:\n"
              << "(1) Log Foods\n"
              << "(2) Manage Foods\n"
-             << "(3) Exit\n";
+             << "(3) Manage Profile\n"
+             << "(4) Exit\n";
 
         int option = getIntegerInput("Enter your choice: ", 1, 3);
 
@@ -193,6 +256,9 @@ int main() {
                     manageFoodsMenu(database);
                     break;
                 case 3:
+                    updateProfileMenu(user, log, database);
+                    break;
+                case 4:
                     database.saveDatabase("food_database.txt");
                     log.saveLog("daily_log.txt");
                     cout << "Exiting program.\n";
