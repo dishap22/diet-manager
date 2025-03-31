@@ -25,16 +25,16 @@ the system.
 
 ### Daily Logs
 
-- [ ] The program must maintain a log of the foods consumed each day; this log must be read when the program starts, and saved when the program terminates or by a user command. The format of the log is only constrained by the fact that it must be text that can be read and processed by a standard
+- [x] The program must maintain a log of the foods consumed each day; this log must be read when the program starts, and saved when the program terminates or by a user command. The format of the log is only constrained by the fact that it must be text that can be read and processed by a standard
 text editor.
 
-- [ ] Users add food to the log by selecting either a composite or basic food and giving the number of servings. Selection can be done by selecting from the whole list of foods, or by narrowing the selection using keywords. The user must have the option of finding foods that match either all or any of the keywords. Note: The same food may be entered several times in the log for a given day.
+- [x] Users add food to the log by selecting either a composite or basic food and giving the number of servings. Selection can be done by selecting from the whole list of foods, or by narrowing the selection using keywords. The user must have the option of finding foods that match either all or any of the keywords. Note: The same food may be entered several times in the log for a given day.
 
-- [ ] Users must be able to delete foods from the log (changing the number of servings can be done by deleting a food and then reentering it with the new serving count).
+- [x] Users must be able to delete foods from the log (changing the number of servings can be done by deleting a food and then reentering it with the new serving count).
 
-- [ ] Users must be able to undo commands to an indefinite depth (that is, there is no predefined limit on how many commands may be undone other than available memory). The undo information is discarded when the program is terminated (that is, it is not carried over from session to session).
+- [x] Users must be able to undo commands to an indefinite depth (that is, there is no predefined limit on how many commands may be undone other than available memory). The undo information is discarded when the program is terminated (that is, it is not carried over from session to session).
 
-- [ ] Users must be able to select, view and update the information for any date in the log, not just the current date.
+- [x] Users must be able to select, view and update the information for any date in the log, not just the current date.
 
 ### Diet Goal Profile
 
