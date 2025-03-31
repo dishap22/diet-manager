@@ -439,7 +439,7 @@ public:
     
         cout << "Total calories consumed: " << totalCalories << " calories\n";
         cout << "Target calories for the day: " << user.getTargetCalories(date) << " calories\n";
-        cout << "Remaining calories: " << user.getTargetCalories(date) - totalCalories << " calories\n";
+        cout << "Calorie excess: " << - user.getTargetCalories(date) + totalCalories << " calories\n";
     }
 
     /**
@@ -475,7 +475,7 @@ public:
 
             cout << "Total calories consumed for " << day.first << ": " << totalCalories << " calories\n";
             cout << "Target calories for the day: " << user.getTargetCalories(day.first) << " calories\n";
-            cout << "Remaining calories: " << user.getTargetCalories(day.first) - totalCalories << " calories\n";
+            cout << "Calorie excess: " << - user.getTargetCalories(day.first) + totalCalories << " calories\n";
         }
     }
 };
