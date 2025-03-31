@@ -1,87 +1,10 @@
 #include "UserProfile.h"
 #include "FoodDatabase.h"
 #include "DailyLog.h"
+#include "Utils.h"
 #include <iostream>
-#include <limits>
 
 using namespace std;
-
-/**
- * Prompts the user for an integer input within a specified range.
- *
- * @param prompt The message to display to the user.
- * @param minVal The minimum allowed value.
- * @param maxVal The maximum allowed value.
- * @return The integer input by the user.
- */
-int getIntegerInput(const string& prompt, int minVal, int maxVal) {
-    int value;
-    while (true) {
-        cout << prompt;
-        if (!(cin >> value) || value < minVal || value > maxVal) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter a number between "
-                 << minVal << " and " << maxVal << ".\n";
-        } else {
-            cin.ignore();
-            return value;
-        }
-    }
-}
-
-/**
- * Prompts the user for a positive integer input.
- *
- * @param prompt The message to display to the user.
- * @return The positive integer input by the user.
- */
-int getPositiveInteger(const string& prompt) {
-    return getIntegerInput(prompt, 1, numeric_limits<int>::max());
-}
-
-/**
- * Prompts the user for a non-empty string input.
- *
- * @param prompt The message to display to the user.
- * @return The non-empty string input by the user.
- */
-string getNonEmptyString(const string& prompt) {
-    string input;
-    while (true) {
-        cout << prompt;
-        getline(cin, input);
-        if (!input.empty()) {
-            return input;
-        }
-        cout << "Input cannot be empty. Please try again.\n";
-    }
-}
-
-/**
- * Prompts the user for a list of keywords.
- *
- * @return A vector containing the keywords entered by the user.
- */
-vector<string> getKeywords() {
-    vector<string> keywords;
-    cout << "Enter keywords (separated by commas): ";
-    string keywordInput;
-    getline(cin, keywordInput);
-
-    if (!keywordInput.empty()) {
-        stringstream ss(keywordInput);
-        string keyword;
-        while (getline(ss, keyword, ',')) {
-            keyword.erase(0, keyword.find_first_not_of(" \t"));
-            keyword.erase(keyword.find_last_not_of(" \t") + 1);
-            if (!keyword.empty()) {
-                keywords.push_back(keyword);
-            }
-        }
-    }
-    return keywords;
-}
 
 /**
  * Creates a composite food item from existing food items.
@@ -156,44 +79,90 @@ void addBasicFood(FoodDatabase& database) {
 }
 
 /**
- * Displays the options for logging food items.
+ * Displays the Log Foods submenu and handles user choices.
  *
  * @param database The food database to search for food items.
  * @param log The daily log to add food items to.
  * @param user The user profile to calculate calorie intake.
  */
-void logOptions(FoodDatabase& database, DailyLog& log, UserProfile& user) {
-    cout << "\nChoose an option:\n"
-         << "(1) Save Log\n"
-         << "(2) Add Log Entry\n"
-         << "(3) Delete Log Entry\n"
-         << "(4) Undo Log Entry\n"
-         << "(5) View Log\n"
-         << "(6) View Log by date\n";
-    
-    try {
-        switch (getIntegerInput("Enter your choice: ", 1, 6)) {
-            case 1:
-                log.saveLog("daily_log.txt");
-                break;
-            case 2:
-                log.logFood(database);
-                break;
-            case 3:
-                log.removeFood();
-                break;
-            case 4:
-                log.undoLog();
-                break;
-            case 5:
-                log.displayAllLogs(database);
-                break;
-            case 6:
-                log.displayLogByDate(database);
-                break;
+void logFoodsMenu(FoodDatabase& database, DailyLog& log, UserProfile& user) {
+    while (true) {
+        cout << "\nLog Foods Menu:\n"
+             << "(1) Save Log\n"
+             << "(2) Add Log Entry\n"
+             << "(3) Delete Log Entry\n"
+             << "(4) Undo Log Entry\n"
+             << "(5) View Log\n"
+             << "(6) View Log by Date\n"
+             << "(7) Back to Main Menu\n";
+
+        int option = getIntegerInput("Enter your choice: ", 1, 7);
+
+        try {
+            switch (option) {
+                case 1:
+                    log.saveLog("daily_log.txt");
+                    break;
+                case 2:
+                    log.logFood(database);
+                    break;
+                case 3:
+                    log.removeFood();
+                    break;
+                case 4:
+                    log.undoLog();
+                    break;
+                case 5:
+                    log.displayAllLogs(database);
+                    break;
+                case 6:
+                    log.displayLogByDate(database);
+                    break;
+                case 7:
+                    return; // Exit the Log Foods menu
+            }
+        } catch (const exception& e) {
+            cerr << "Error: " << e.what() << endl;
         }
-    } catch (const exception& e) {
-        cerr << "Error: " << e.what() << endl;
+    }
+}
+
+/**
+ * Displays the Manage Foods submenu and handles user choices.
+ *
+ * @param database The food database to manage.
+ */
+void manageFoodsMenu(FoodDatabase& database) {
+    while (true) {
+        cout << "\nManage Foods Menu:\n"
+             << "(1) Create Composite Food\n"
+             << "(2) View All Foods\n"
+             << "(3) Add New Basic Food\n"
+             << "(4) Save Database\n"
+             << "(5) Back to Main Menu\n";
+
+        int option = getIntegerInput("Enter your choice: ", 1, 5);
+
+        try {
+            switch (option) {
+                case 1:
+                    createCompositeFood(database);
+                    break;
+                case 2:
+                    database.displayAllFoods();
+                    break;
+                case 3:
+                    addBasicFood(database);
+                    break;
+                case 4:
+                    database.saveDatabase("food_database.txt");
+                    break;
+                case 5:
+                    return; // Exit the Manage Foods menu
+            }
+        } catch (const exception& e) {
+            cerr << "Error: " << e.what() << endl;
+        }
     }
 }
 
@@ -208,37 +177,24 @@ int main() {
     database.loadDatabase("food_database.txt");
 
     while (true) {
-        cout << "\nChoose an option:\n"
-             << "(1) Log food\n"
-             << "(2) Create composite food\n"
-             << "(3) View all foods\n"
-             << "(4) Add new basic food\n"
-             << "(5) Save database\n"
-             << "(6) Exit\n";
+        cout << "\nMain Menu:\n"
+             << "(1) Log Foods\n"
+             << "(2) Manage Foods\n"
+             << "(3) Exit\n";
 
-        int option = getIntegerInput("Enter your choice: ", 1, 6);
+        int option = getIntegerInput("Enter your choice: ", 1, 3);
 
         try {
             switch (option) {
                 case 1:
-                    logOptions(database, log, user);
+                    logFoodsMenu(database, log, user);
                     break;
                 case 2:
-                    createCompositeFood(database);
+                    manageFoodsMenu(database);
                     break;
                 case 3:
-                    database.displayAllFoods();
-                    break;
-                case 4:
-                    addBasicFood(database);
-                    break;
-                case 5:
-                    database.saveDatabase("food_database.txt");
-                    break;
-                case 6:
                     database.saveDatabase("food_database.txt");
                     log.saveLog("daily_log.txt");
-                    log.displayAllLogs(database);
                     cout << "Exiting program.\n";
                     return 0;
             }

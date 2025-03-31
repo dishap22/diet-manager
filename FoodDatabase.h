@@ -22,7 +22,6 @@ public:
         }
     }
 
-
     /**
      * Adds a food item to the database.
      *
@@ -111,9 +110,9 @@ public:
     }
 
     /**
-     * Saves the database to a file.
+     * Loads the database from a file.
      *
-     * @param filename The name of the file to save the database to.
+     * @param filename The name of the file to load the database from.
      */
     void loadDatabase(const string& filename) {
         ifstream file(filename);
