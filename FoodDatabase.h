@@ -42,26 +42,68 @@ public:
     }
 
     /**
-     * Searches for a food item by keyword.
+     * Searches for food items by keywords.
      *
-     * @param keyword The keyword to search for.
-     * @return A pointer to the first food item that contains the keyword, or nullptr if no such food item exists.
+     * @param keywords The list of keywords to search for.
+     * @param matchAll If true, all keywords must match; if false, any keyword can match.
+     * @return A vector of pointers to food items that match the criteria.
      */
-    Food* searchFood(string keyword) {
-        for (auto &food : foods) {
-            if (food->name == keyword) return food;
+    vector<Food*> searchFood(const vector<string>& keywords, bool matchAll) {
+        vector<Food*> matchingFoods;
 
-            for (auto &k : food->keywords) {
-                if (k == keyword) return food;
+        // If keywords is empty, return all foods
+        if (keywords.empty()) {
+            return foods;
+        }
+
+        for (auto& food : foods) {
+            int matchCount = 0;
+
+            for (const auto& keyword : keywords) {
+                if (find(food->keywords.begin(), food->keywords.end(), keyword) != food->keywords.end()) {
+                    matchCount++;
+                }
+            }
+
+            if ((matchAll && matchCount == keywords.size()) || (!matchAll && matchCount > 0)) {
+                matchingFoods.push_back(food);
             }
         }
-        return nullptr;
+
+        return matchingFoods;
+    }
+
+    /**
+     * Searches for a single food item by name.
+     *
+     * @param name The name of the food item to search for.
+     * @return A pointer to the food item if found, or nullptr if not found.
+     */
+    Food* searchOneFood(const string& name) {
+        for (auto& food : foods) {
+            if (food->name == name) {
+                return food;
+            }
+        }
+        return nullptr; // Return nullptr if no matching food is found
     }
 
     /**
      * Displays all food items in the database.
      */
     void displayAllFoods() {
+        cout << "Available foods:\n";
+        for (int i = 0; i < foods.size(); ++i) {
+            cout << i << ": " << foods[i]->name << " (" << foods[i]->calories << " calories) - " << (dynamic_cast<CompositeFood*>(foods[i]) ? "Composite" : "Basic") << endl;
+        }
+    }
+
+    /**
+     * Display some foods
+     * 
+     * @param foods The list of foods to display
+     */
+    void displayFoods(const vector<Food*>& foods) {
         cout << "Available foods:\n";
         for (int i = 0; i < foods.size(); ++i) {
             cout << i << ": " << foods[i]->name << " (" << foods[i]->calories << " calories) - " << (dynamic_cast<CompositeFood*>(foods[i]) ? "Composite" : "Basic") << endl;
@@ -121,7 +163,7 @@ public:
                     getline(ingSS, foodName, ',');
                     ingSS >> servings;
 
-                    Food* foundFood = searchFood(foodName);
+                    Food* foundFood = searchOneFood(foodName);
                     if (foundFood) {
                         ingredients.push_back({foundFood, servings});
                     }

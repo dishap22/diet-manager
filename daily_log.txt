@@ -1,0 +1,2 @@
+02/02/2025|Chicken Breast,5;
+31/03/2025|Bread,2;Apple,7;

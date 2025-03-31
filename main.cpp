@@ -84,26 +84,6 @@ vector<string> getKeywords() {
 }
 
 /**
- * Logs a food item to the daily log.
- *
- * @param database The food database to search for the food item.
- * @param log The daily log to add the food item to.
- */
-void logFood(FoodDatabase& database, DailyLog& log) {
-    string choice = getNonEmptyString("Enter a food name to log: ");
-    Food* selectedFood = database.searchFood(choice);
-
-    if (!selectedFood) {
-        cout << "Food not found!\n";
-        return;
-    }
-
-    int servings = getPositiveInteger("Enter number of servings: ");
-    log.addFood(selectedFood->name, servings);
-    cout << "Logged " << servings << " serving(s) of " << selectedFood->name << ".\n";
-}
-
-/**
  * Creates a composite food item from existing food items.
  *
  * @param database The food database to search for the food items and add the food to.
@@ -176,6 +156,48 @@ void addBasicFood(FoodDatabase& database) {
 }
 
 /**
+ * Displays the options for logging food items.
+ *
+ * @param database The food database to search for food items.
+ * @param log The daily log to add food items to.
+ * @param user The user profile to calculate calorie intake.
+ */
+void logOptions(FoodDatabase& database, DailyLog& log, UserProfile& user) {
+    cout << "\nChoose an option:\n"
+         << "(1) Save Log\n"
+         << "(2) Add Log Entry\n"
+         << "(3) Delete Log Entry\n"
+         << "(4) Undo Log Entry\n"
+         << "(5) View Log\n"
+         << "(6) View Log by date\n";
+    
+    try {
+        switch (getIntegerInput("Enter your choice: ", 1, 6)) {
+            case 1:
+                log.saveLog("daily_log.txt");
+                break;
+            case 2:
+                log.logFood(database);
+                break;
+            case 3:
+                log.removeFood();
+                break;
+            case 4:
+                log.undoLog();
+                break;
+            case 5:
+                log.displayAllLogs(database);
+                break;
+            case 6:
+                log.displayLogByDate(database);
+                break;
+        }
+    } catch (const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+    }
+}
+
+/**
  * The main function of the program.
  */
 int main() {
@@ -199,7 +221,7 @@ int main() {
         try {
             switch (option) {
                 case 1:
-                    logFood(database, log);
+                    logOptions(database, log, user);
                     break;
                 case 2:
                     createCompositeFood(database);
@@ -215,7 +237,9 @@ int main() {
                     break;
                 case 6:
                     database.saveDatabase("food_database.txt");
-                    log.displayLog();
+                    log.saveLog("daily_log.txt");
+                    log.displayAllLogs(database);
+                    cout << "Exiting program.\n";
                     return 0;
             }
         } catch (const exception& e) {
