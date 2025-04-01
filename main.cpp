@@ -245,7 +245,7 @@ int main() {
              << "(3) Manage Profile\n"
              << "(4) Exit\n";
 
-        int option = getIntegerInput("Enter your choice: ", 1, 3);
+        int option = getIntegerInput("Enter your choice: ", 1, 4);
 
         try {
             switch (option) {
