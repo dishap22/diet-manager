@@ -1,1 +1,4 @@
 DietManager
+.gitignore
+.vscode/
+a.out

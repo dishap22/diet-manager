@@ -14,7 +14,7 @@ using namespace std;
 void createCompositeFood(FoodDatabase& database) {
     string compositeName = getNonEmptyString("Enter name for the new composite food: ");
 
-    cout << "Enter optional keywords (leave empty to generate from ingredients):\n";
+    cout << "Enter optional keywords (leave empty to generate from ingredients)\n";
     vector<string> keywords = getKeywords();
 
     database.displayAllFoods();
@@ -80,7 +80,7 @@ void addBasicFood(FoodDatabase& database) {
 
 /**
  * Displays the Update Profile submenu and handles user choices.
- * 
+ *
  * @param user The user profile to update.
  * @param log The daily log to update with new profile information.
  * @param database The food database to recalculate calorie intake.
