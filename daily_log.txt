@@ -1,2 +1,14 @@
-02/02/2025|Chicken Breast,5;
-31/03/2025|Peanut Butter,10;Bread,2;Apple,7;
+02/01/2025|Chicken Breast,5;
+10/01/2025|Peanut Butter,10;Bread,2;Apple,7;
+18/01/2025|Apple,3;Jelly,2;
+25/01/2025|Chicken Breast,2;Rice,4;Spinach,1;
+03/02/2025|Almonds,15;Apple,2;
+11/02/2025|Fish,3;Rice,2;Spinach,2;
+18/02/2025|Jelly Butter,4;Bread,3;
+24/02/2025|Pizza,4;Ramen,2;
+02/03/2025|Apple Bread,2;Butter,1;
+08/03/2025|Peanut Butter,5;Apple,4;Bread,3;
+15/03/2025|Chicken Breast,3;Spinach,3;Rice,2;
+22/03/2025|Pizza,2;Fish,1;Ramen,1;
+28/03/2025|Jelly,3;Almonds,8;Apple,1;
+01/04/2025|Apple Bread,3;Chicken Breast,1;
